@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:uitmgo/Presentation/SignUp_and_Login/signIn.dart';
-
 import '../../Core/AuthenticationAndDataUpload.dart';
 import '../../Widgets/custom_button.dart';
 import '../BottomBar/bottomBar.dart';
@@ -21,6 +20,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _studentIdController = TextEditingController();
+  bool _isPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const Text('Sign Up', style: TextStyle(color: Colors.white)),
               ],
             ),
-            Divider(),
+            const Divider(),
           ],
         ),
       ),
@@ -70,76 +70,117 @@ class _SignUpScreenState extends State<SignUpScreen> {
               const SizedBox(height: 50),
               Form(
                 key: _formKey,
-                  child: Column(
-                children: [
-                  TextFormField(
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      hintText: 'Student Id',
-                      hintStyle: TextStyle(color: Colors.grey[300]),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                child: Column(
+                  children: [
+                    TextFormField(
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: 'Student Id',
+                        hintStyle: TextStyle(color: Colors.grey[300]),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
+                      controller: _studentIdController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your Student Id';
+                        }
+                        return null;
+                      },
                     ),
-                    controller: _studentIdController,
-                  ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      hintText: 'Full Name',
-                      hintStyle: TextStyle(color: Colors.grey[300]),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: 'Full Name',
+                        hintStyle: TextStyle(color: Colors.grey[300]),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
+                      controller: _nameController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your Full Name';
+                        }
+                        return null;
+                      },
                     ),
-                    controller: _nameController,
-                  ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      hintText: 'Phone Number',
-                      hintStyle: TextStyle(color: Colors.grey[300]),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: 'Phone Number',
+                        hintStyle: TextStyle(color: Colors.grey[300]),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
+                      controller: _phoneController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your Phone Number';
+                        }
+                        return null;
+                      },
                     ),
-                    controller: _phoneController,
-                  ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      hintText: 'Email Address',
-                      hintStyle: TextStyle(color: Colors.grey[300]),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: 'Email Address',
+                        hintStyle: TextStyle(color: Colors.grey[300]),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
+                      controller: _emailController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your Email Address';
+                        }
+                        return null;
+                      },
                     ),
-                    controller: _emailController,
-                  ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      hintText: 'Password',
-                      hintStyle: TextStyle(color: Colors.grey[300]),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      obscureText: !_isPasswordVisible,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: 'Password',
+                        hintStyle: TextStyle(color: Colors.grey[300]),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isPasswordVisible = !_isPasswordVisible;
+                            });
+                          },
+                        ),
                       ),
+                      controller: _passwordController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your Password';
+                        }
+                        return null;
+                      },
                     ),
-                    controller: _passwordController,
-                  ),
-                  const SizedBox(height: 30),
-                ],
-              )),
+                    const SizedBox(height: 30),
+                  ],
+                ),
+              ),
               CustomButton(
                 onPress: () {
                   _signUp();
@@ -166,8 +207,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
+
   void _signUp() async {
     if (!_formKey.currentState!.validate()) {
+      _showErrorMessage("Please fill all fields");
       return;
     }
 
@@ -176,19 +219,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
       String password = _passwordController.text;
 
       UserCredential userCredential =
-      await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
       User? user = userCredential.user;
       if (user != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Row(
+            content: Row(
               children: [
                 Icon(Icons.notifications_active_outlined, color: Colors.white),
                 SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     "Welcome to UiTM GO",
-                    style: TextStyle(color: Colors.green, fontSize: 16),
+                    style: TextStyle(color: Colors.amber[300], fontSize: 16),
                   ),
                 ),
               ],
@@ -225,19 +271,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
       SnackBar(
         content: Row(
           children: [
-            Icon(Icons.error_outline, color: Colors.red),
-            SizedBox(width: 10),
+            const Icon(Icons.error_outline, color: Colors.red),
+            const SizedBox(width: 10),
             Expanded(
               child: Text(
                 message,
-                style: TextStyle(color: Colors.red, fontSize: 16),
+                style: const TextStyle(color: Colors.red, fontSize: 16),
               ),
             ),
           ],
         ),
         backgroundColor: Colors.white,
         behavior: SnackBarBehavior.floating,
-        duration: Duration(seconds: 5),
+        duration: const Duration(seconds: 5),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
@@ -255,5 +301,4 @@ class _SignUpScreenState extends State<SignUpScreen> {
       studentId: _studentIdController.text,
     );
   }
-
 }

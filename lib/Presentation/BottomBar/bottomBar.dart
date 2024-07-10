@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import '../Create_Events/create_events.dart';
+import '../Home_Screen/home_Screen.dart';
+import '../Profile/profile_screen.dart';
+import '../Wishlist_Page/wishlist_page.dart';
 
 
 
@@ -11,15 +15,15 @@ class UserBottom extends StatefulWidget {
 
 class _BottomBarState extends State<UserBottom> {
   int index_color = 0;
-  List Screen = [];
+  List Screen = [HomeScreen(),WishlistPage(),CreateEvents(),ProfileScreen()];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Screen[index_color],
         bottomNavigationBar: BottomAppBar(
-          height: 60,
-          shape: CircularNotchedRectangle(),
+          color: Colors.black,
+          shape: const CircularNotchedRectangle(),
           child: Padding(
             padding: const EdgeInsets.only(top: 7.5, bottom: 7.5),
             child: Row(
@@ -34,7 +38,7 @@ class _BottomBarState extends State<UserBottom> {
                   child: Icon(
                     Icons.home,
                     size: 30,
-                    color: index_color == 0 ? Colors.green : Colors.grey,
+                    color: index_color == 0 ? Colors.amber[300] : Colors.white,
                   ),
                 ),
                 const SizedBox(width: 20),
@@ -45,9 +49,9 @@ class _BottomBarState extends State<UserBottom> {
                     });
                   },
                   child: Icon(
-                    Icons.checklist,
+                    Icons.widgets_sharp,
                     size: 30,
-                    color: index_color == 1 ? Colors.green : Colors.grey,
+                    color: index_color == 1 ? Colors.amber[300] : Colors.white,
                   ),
                 ),
                 const SizedBox(width: 20),
@@ -58,9 +62,9 @@ class _BottomBarState extends State<UserBottom> {
                     });
                   },
                   child: Icon(
-                    Icons.history,
+                    Icons.person,
                     size: 30,
-                    color: index_color == 2 ? Colors.green : Colors.grey,
+                    color: index_color == 2 ? Colors.amber[300] : Colors.white,
                   ),
                 ),
                 const SizedBox(width: 20),
@@ -71,9 +75,9 @@ class _BottomBarState extends State<UserBottom> {
                     });
                   },
                   child: Icon(
-                    Icons.person_outline,
+                    Icons.menu,
                     size: 30,
-                    color: index_color == 3 ? Colors.green : Colors.grey,
+                    color: index_color == 3 ? Colors.amber[300] : Colors.white,
                   ),
                 ),
               ],
