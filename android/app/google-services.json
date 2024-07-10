@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "411727287177",
+    "project_id": "uitmgo",
+    "storage_bucket": "uitmgo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:411727287177:android:3c87de0d6fac5fc28d0758",
+        "android_client_info": {
+          "package_name": "com.example.uitmgo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "411727287177-g65hg03uhneuttv84gq4vpj71tc3vaok.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAg5vcqb7hiaxNF5GVrT3bpfODj4mLN73U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "411727287177-g65hg03uhneuttv84gq4vpj71tc3vaok.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "411727287177-dca3vjnksrke1eb5jqdkdkfss9qa34ef.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.uitmGoWebAdmin"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
