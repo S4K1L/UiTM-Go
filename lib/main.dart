@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       title: 'UiTM Go',
       home: AnimatedSplashScreen(
         splash: 'assets/logo/logo.png',
-        splashIconSize: 36,
+        splashIconSize: 150,
         nextScreen: const OnboardingScreen(),
         splashTransition: SplashTransition.fadeTransition,
       ),
