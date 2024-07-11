@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
+import '../Admin_Panel/Account_Manage/account_manage.dart';
+import '../Admin_Panel/Event_Manage/event_manage.dart';
 import '../Create_Events/create_events.dart';
 import '../Home_Screen/home_Screen.dart';
-import '../Profile/profile_screen.dart';
-import '../Wishlist_Page/wishlist_page.dart';
 
 
 
-class UserBottomBar extends StatefulWidget {
-  const UserBottomBar({super.key});
+class AdminBottomBar extends StatefulWidget {
+  const AdminBottomBar({super.key});
 
   @override
-  State<UserBottomBar> createState() => _BottomBarState();
+  State<AdminBottomBar> createState() => _BottomBarState();
 }
 
-class _BottomBarState extends State<UserBottomBar> {
+class _BottomBarState extends State<AdminBottomBar> {
   int index_color = 0;
-  List Screen = [HomeScreen(),WishlistPage(),CreateEvents(),ProfileScreen()];
+  List Screen = [HomeScreen(),CreateEvents(),EventManage(),AccountManage()];
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +62,7 @@ class _BottomBarState extends State<UserBottomBar> {
                     });
                   },
                   child: Icon(
-                    Icons.person,
+                    Icons.event_repeat_sharp,
                     size: 30,
                     color: index_color == 2 ? Colors.amber[300] : Colors.white,
                   ),
@@ -75,7 +75,7 @@ class _BottomBarState extends State<UserBottomBar> {
                     });
                   },
                   child: Icon(
-                    Icons.menu,
+                    Icons.manage_accounts,
                     size: 30,
                     color: index_color == 3 ? Colors.amber[300] : Colors.white,
                   ),

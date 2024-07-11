@@ -24,7 +24,7 @@ class CustomAppBar extends StatelessWidget {
               child: Icon(
                 Icons.chevron_left_rounded,
                 color: Colors.black,
-                size: 28,
+                size: 32,
               ),
             ),
           ],

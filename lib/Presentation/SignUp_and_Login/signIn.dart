@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:uitmgo/Presentation/BottomBar/admin_BottomBar.dart';
+import 'package:uitmgo/Presentation/Forgot_Password/forgot_password.dart';
+import 'package:uitmgo/Presentation/SignUp_and_Login/signup.dart';
 import 'package:uitmgo/Widgets/custom_button.dart';
 import '../BottomBar/bottomBar.dart';
 import '../../Core/AuthenticationAndDataUpload.dart';
@@ -48,7 +51,10 @@ class _SignInScreenState extends State<SignInScreen> {
                           IconButton(
                             icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 18),
                             onPressed: () {
-                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const SignUpScreen()),
+                              );
                             },
                           ),
                           const Text('Sign In', style: TextStyle(color: Colors.white,fontSize: 22)),
@@ -140,7 +146,10 @@ class _SignInScreenState extends State<SignInScreen> {
                       const SizedBox(height: 150),
                       TextButton(
                         onPressed: () {
-                          // Add your onPressed code here!
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ForgotPassword()),
+                          );
                         },
                         child: const Text(
                           'Forgot Your Password?',
@@ -207,7 +216,7 @@ class _SignInScreenState extends State<SignInScreen> {
           if (mounted) {
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => const UserBottom()),
+              MaterialPageRoute(builder: (context) => const UserBottomBar()),
                   (Route<dynamic> route) => false,
             );
           }
@@ -215,7 +224,11 @@ class _SignInScreenState extends State<SignInScreen> {
       }
       else if (userType == "admin") {
         _showSuccessSnackbar("Welcome Admin");
-
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const AdminBottomBar()),
+              (Route<dynamic> route) => false,
+        );
       }
       else {
         _showErrorMessage("Some error in logging in!");

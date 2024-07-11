@@ -83,7 +83,7 @@ class _CreateEventsState extends State<CreateEvents> {
       _showSuccessSnackBar("Event post published");
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const UserBottom()),
+        MaterialPageRoute(builder: (context) => const UserBottomBar()),
       );
 
     } catch (e) {

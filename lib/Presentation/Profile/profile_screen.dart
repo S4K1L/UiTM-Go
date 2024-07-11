@@ -5,7 +5,6 @@ import 'package:uitmgo/Presentation/SignUp_and_Login/signIn.dart';
 import '../../../../Core/Repository_and_Authentication/custom_buttons.dart';
 import '../../../../Core/Repository_and_Authentication/profile_image_picker.dart';
 import '../../Themes/const.dart';
-import '../BottomBar/bottomBar.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -48,6 +47,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
     getUserData();
   }
 
+  void _showSuccessSnackbar(String message) {
+    Future.microtask(() {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Row(
+            children: [
+              Icon(
+                Icons.notifications_active_outlined,
+                color: Colors.amber[300],
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  message,
+                  style:  TextStyle(
+                    color: Colors.amber[300],
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.white,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 3),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          elevation: 6,
+          margin: const EdgeInsets.all(20),
+        ));
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,8 +93,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text(
               "Profile",
               style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
+                  fontSize: 22,
                   color: Colors.white),
             ),
             Divider(),
@@ -130,6 +163,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 CustomButton(
                   onPress: () async {
                     signOut();
+                    _showSuccessSnackbar("SignOut Successfully");
                   },
                   title: "SIGN OUT",
                 ),

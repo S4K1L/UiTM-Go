@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:uitmgo/Presentation/Onboarding_Screen/OnboardingScreen.dart';
 import 'package:uitmgo/Presentation/SignUp_and_Login/signIn.dart';
 import '../../Core/AuthenticationAndDataUpload.dart';
 import '../../Widgets/custom_button.dart';
@@ -41,7 +42,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     size: 18,
                   ),
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => OnboardingScreen()),
+                    );
                   },
                 ),
                 const Text('Sign Up', style: TextStyle(color: Colors.white)),
@@ -251,7 +255,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const UserBottom(),
+            builder: (context) => const UserBottomBar(),
           ),
         );
 
