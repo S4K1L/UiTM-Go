@@ -181,8 +181,8 @@ class _CreateEventsState extends State<CreateEvents> {
           radius: 80.0,
           lineWidth: 16.0,
           percent: _uploadProgress,
-          center: Text('${(_uploadProgress * 100).toStringAsFixed(0)}%'),
-          progressColor: Colors.blue,
+          center: Text('${(_uploadProgress * 100).toStringAsFixed(0)}%',style: TextStyle(color: Colors.white),),
+          progressColor: Colors.amber,
         ),
       )
           : SingleChildScrollView(
