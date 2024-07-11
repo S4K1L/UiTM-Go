@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../../../../Themes/const.dart';
 import '../../../../Themes/styles.dart';
 import '../../event_model.dart';
 

@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../../../Themes/styles.dart';
 import '../../../Home_Screen/event_model.dart';
@@ -14,108 +12,12 @@ class WishListMenuDetails extends StatefulWidget {
 }
 
 class _WishListMenuDetailsState extends State<WishListMenuDetails> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  User? _user;
-  bool isFavorite = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _user = _auth.currentUser;
-    _checkIfFavorite();
-  }
-
-  void _checkIfFavorite() async {
-    if (_user == null) {
-      return;
-    }
-    final userUid = _user!.uid;
-    final event = widget.event;
-
-    final querySnapshot = await _firestore
-        .collection('wishList')
-        .where('userUid', isEqualTo: userUid)
-        .where('docId', isEqualTo: event.docId)
-        .get();
-
-    if (querySnapshot.docs.isNotEmpty) {
-      setState(() {
-        isFavorite = true;
-      });
-    } else {
-      setState(() {
-        isFavorite = false;
-      });
-    }
-  }
-
-  void _toggleFavorite(EventModel event) {
-    if (_user == null) {
-      return;
-    }
-    final userUid = _user!.uid;
-
-    setState(() {
-      isFavorite = !isFavorite;
-    });
-
-    if (isFavorite) {
-      _firestore.collection('wishList').add({
-        'imageUrl': event.imageUrl,
-        'eventName': event.eventName,
-        'docId': event.docId,
-        'eventDescription': event.eventDescription,
-        'wishList': event.wishList,
-        'location': event.location,
-        'date': event.date,
-        'moreImagesUrl': event.moreImagesUrl,
-        'userUid': userUid,
-      });
-    } else {
-      _firestore
-          .collection('wishList')
-          .where('docId', isEqualTo: event.docId)
-          .where('userUid', isEqualTo: userUid)
-          .get()
-          .then((querySnapshot) {
-        for (var doc in querySnapshot.docs) {
-          doc.reference.delete();
-        }
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final menu = widget.event;
 
     return Scaffold(
       backgroundColor: Colors.black,
-      bottomNavigationBar: ListTile(
-        title: Row(
-          children: [
-            Switch(
-              value: isFavorite,
-              onChanged: (value) {
-                setState(() {
-                  isFavorite = value;
-                });
-                _toggleFavorite(menu);
-              },
-              activeColor: Colors.green,
-            ),
-            const SizedBox(width: 10),
-            const Text(
-              'Add to Wishlist?',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      ),
       body: ListView(
         physics: const BouncingScrollPhysics(),
         shrinkWrap: true,

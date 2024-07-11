@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uitmgo/Presentation/Home_Screen/event_model.dart';
-import 'package:uitmgo/Presentation/Home_Screen/post_details/details_screen.dart';
 import 'package:uitmgo/Presentation/Wishlist_Page/post_details/wishList_details_screen.dart';
 
 class WishListEventPost extends StatefulWidget {
@@ -23,11 +22,6 @@ class _WishListEventPostState extends State<WishListEventPost> {
     _menuStream = _fetchMenuFromFirebase();
   }
 
-  void _onSearch(String searchText) {
-    setState(() {
-      _searchText = searchText;
-    });
-  }
 
   Stream<List<EventModel>> _fetchMenuFromFirebase() {
     return FirebaseFirestore.instance
@@ -53,6 +47,10 @@ class _WishListEventPostState extends State<WishListEventPost> {
     });
   }
 
+  Future<void> _deletePost(String docId) async {
+    await FirebaseFirestore.instance.collection('wishList').doc(docId).delete();
+  }
+
   Widget _buildMenu(BuildContext context, EventModel menu) {
     return GestureDetector(
       onTap: () {
@@ -65,42 +63,60 @@ class _WishListEventPostState extends State<WishListEventPost> {
       },
       child: Column(
         children: [
-          Container(
-            height: 180,
-            width: MediaQuery.of(context).size.width / 3,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8), color: Colors.white),
-            child: Column(
-              children: [
-                ClipRRect(
-                  child: Image.network(
-                    menu.imageUrl,
-                    height: 180,
-                    width: MediaQuery.of(context).size.width,
-                    fit: BoxFit.cover,
-                  ),
-                  borderRadius: BorderRadius.circular(8),
+          Stack(
+            children: [
+              Container(
+                height: 180,
+                width: MediaQuery.of(context).size.width / 3,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8), color: Colors.white),
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      child: Image.network(
+                        menu.imageUrl,
+                        height: 180,
+                        width: MediaQuery.of(context).size.width,
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              Positioned(
+                top: 0,
+                right: 0,
+                child: IconButton(
+                  icon: Icon(Icons.remove_circle_outlined, color: Colors.red),
+                  onPressed: () async {
+                    await _deletePost(menu.docId);
+                  },
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.only(right: 10,left: 30),
+          padding: const EdgeInsets.only(right: 10, left: 30),
           child: Align(
-              alignment: Alignment.topLeft,
-              child: Text(_selectedCategory,style: const TextStyle(fontWeight: FontWeight.bold,color: Colors.black),)),
+            alignment: Alignment.topLeft,
+            child: Text(
+              _selectedCategory,
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold, color: Colors.black),
+            ),
+          ),
         ),
-        const SizedBox(height: 10,),
+        const SizedBox(height: 10),
         Flexible(
           child: StreamBuilder<List<EventModel>>(
             stream: _menuStream,
@@ -111,7 +127,8 @@ class _WishListEventPostState extends State<WishListEventPost> {
                 );
               } else if (snapshot.hasError) {
                 return Center(
-                  child: Text('Error: ${snapshot.error}',style: const TextStyle(color: Colors.white)),
+                  child: Text('Error: ${snapshot.error}',
+                      style: const TextStyle(color: Colors.white)),
                 );
               } else {
                 List<EventModel>? menus = snapshot.data;
@@ -136,15 +153,18 @@ class _WishListEventPostState extends State<WishListEventPost> {
                       itemCount: filteredMenu.length,
                       itemBuilder: (context, index) {
                         return _buildMenu(context, filteredMenu[index]);
-                      },);
+                      },
+                    );
                   } else {
                     return const Center(
-                      child: Text('No matching items found.',style: TextStyle(color: Colors.white)),
+                      child: Text('No matching event found.',
+                          style: TextStyle(color: Colors.white)),
                     );
                   }
                 } else {
                   return const Center(
-                    child: Text('No items available.',style: TextStyle(color: Colors.white)),
+                    child: Text('No event available.',
+                        style: TextStyle(color: Colors.white)),
                   );
                 }
               }

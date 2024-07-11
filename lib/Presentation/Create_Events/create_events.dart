@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:uitmgo/Presentation/BottomBar/bottomBar.dart';
 
 class CreateEvents extends StatefulWidget {
   const CreateEvents({super.key});
@@ -80,7 +81,10 @@ class _CreateEventsState extends State<CreateEvents> {
       });
 
       _showSuccessSnackBar("Event post published");
-      Navigator.pop(context);  // Navigate back to the previous screen
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const UserBottom()),
+      );
 
     } catch (e) {
       print("Error uploading user data: $e");
@@ -163,17 +167,11 @@ class _CreateEventsState extends State<CreateEvents> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Row(
+        title: Column(
           children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new,
-                  color: Colors.white, size: 18),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
             const Text('Add Event',
                 style: TextStyle(color: Colors.white, fontSize: 22)),
+            Divider(),
           ],
         ),
       ),

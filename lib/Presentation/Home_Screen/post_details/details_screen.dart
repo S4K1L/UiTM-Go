@@ -6,9 +6,9 @@ import 'components/menu_details.dart';
 
 
 class DetailsScreen extends StatefulWidget {
-  final EventModel menu;
+  final EventModel event;
 
-  const DetailsScreen({Key? key, required this.menu}) : super(key: key);
+  const DetailsScreen({Key? key, required this.event}) : super(key: key);
 
   @override
   _DetailsScreenState createState() => _DetailsScreenState();
@@ -23,12 +23,12 @@ class _DetailsScreenState extends State<DetailsScreen> {
         children: [
           Stack(
             children: [
-              CarouselImages(widget.menu.moreImagesUrl),
+              CarouselImages(widget.event.moreImagesUrl),
               CustomAppBar(),
             ],
           ),
           //Categories(),
-          Expanded(child: MenuDetails(widget.menu)),
+          Expanded(child: MenuDetails(widget.event)),
         ],
       ),
     );
