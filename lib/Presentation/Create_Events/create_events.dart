@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:uitmgo/Presentation/BottomBar/bottomBar.dart';
 
 class CreateEvents extends StatefulWidget {
   const CreateEvents({super.key});
@@ -85,11 +84,15 @@ class _CreateEventsState extends State<CreateEvents> {
       });
 
       _showSuccessSnackBar("Event post published");
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const UserBottomBar()),
-      );
 
+      // Reset the form and clear controllers
+      _formKey.currentState!.reset();
+      _eventNameController.clear();
+      _eventDescriptionController.clear();
+      _dateController.clear();
+      _locationController.clear();
+      _images.clear();
+      setState(() {}); // Trigger a rebuild to update the UI
     } catch (e) {
       print("Error uploading user data: $e");
       _showErrorSnackBar("Error uploading user data: $e");
@@ -100,6 +103,16 @@ class _CreateEventsState extends State<CreateEvents> {
       });
     }
   }
+
+  @override
+  void dispose() {
+    _eventNameController.dispose();
+    _eventDescriptionController.dispose();
+    _dateController.dispose();
+    _locationController.dispose();
+    super.dispose();
+  }
+
 
   Future<String> _uploadImage(File imageFile) async {
     Reference ref = FirebaseStorage.instance.ref().child(
@@ -179,84 +192,85 @@ class _CreateEventsState extends State<CreateEvents> {
           ],
         ),
       ),
-      body: _isUploading
-          ? Center(
-        child: CircularPercentIndicator(
-          radius: 80.0,
-          lineWidth: 16.0,
-          percent: _uploadProgress,
-          center: Text('${(_uploadProgress * 100).toStringAsFixed(0)}%', style: TextStyle(color: Colors.white)),
-          progressColor: Colors.amber,
-        ),
-      )
-          : SingleChildScrollView(
-        child: Column(
-          children: [
-            Column(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton(
-                        onPressed: _getImage,
-                        child: Image.asset('assets/images/add.png',width: 80,height: 80,),),
-                  ),
-                ),
-                const SizedBox(height: 5.0),
-                _images.isEmpty
-                    ? Container()
-                    : GridView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                  ),
-                  itemCount: _images.length,
-                  itemBuilder: (context, index) {
-                    return Image.file(
-                      _images[index],
-                      fit: BoxFit.cover,
-                    );
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(36.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        _buildTextField('Event Name', _eventNameController, true),
-                        const SizedBox(height: 20),
-                        _buildTextField('Event Description', _eventDescriptionController, true),
-                        const SizedBox(height: 20),
-                        _buildDateField(),
-                        const SizedBox(height: 20),
-                        _buildTextField('Location', _locationController, true),
-                        const SizedBox(height: 50),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.purple,
-                            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                            textStyle: const TextStyle(fontSize: 18),
-                          ),
-                          onPressed: _uploadAllData,
-                          child: const Text(
-                            '+ Create',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ],
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextButton(
+                          onPressed: _getImage,
+                          child: Image.asset('assets/images/add.png', width: 80, height: 80,),),
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 5.0),
+                    _images.isEmpty
+                        ? Container()
+                        : GridView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                      ),
+                      itemCount: _images.length,
+                      itemBuilder: (context, index) {
+                        return Image.file(
+                          _images[index],
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(36.0),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            _buildTextField('Event Name', _eventNameController, true),
+                            const SizedBox(height: 20),
+                            _buildTextField('Event Description', _eventDescriptionController, true),
+                            const SizedBox(height: 20),
+                            _buildDateField(),
+                            const SizedBox(height: 20),
+                            _buildTextField('Location', _locationController, true),
+                            const SizedBox(height: 50),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.purple,
+                                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                                textStyle: const TextStyle(fontSize: 18),
+                              ),
+                              onPressed: _uploadAllData,
+                              child: const Text(
+                                '+ Create',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          if (_isUploading)
+            Container(
+              color: Colors.black54,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+        ],
       ),
     );
   }
