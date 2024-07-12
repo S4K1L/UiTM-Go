@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uitmgo/Presentation/Home_Screen/event_model.dart';
 import 'package:uitmgo/Presentation/Home_Screen/post_details/details_screen.dart';
 import 'Search_button/custom_search.dart';
@@ -21,8 +21,8 @@ class _EventPostState extends State<EventPost> {
   @override
   void initState() {
     super.initState();
-    _wishListStream = _fetchWishListFromFirebase();
     _menuStream = _fetchMenuFromFirebase();
+    _wishListStream = _fetchWishListFromFirebase();
   }
 
   void _onSearch(String searchText) {
@@ -31,20 +31,11 @@ class _EventPostState extends State<EventPost> {
     });
   }
 
-  Stream<List<EventModel>> _fetchWishListFromFirebase() {
-    final User? user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      throw Exception('User not logged in');
-    }
-    return FirebaseFirestore.instance
-        .collection('wishList')
-        .where('userUid', isEqualTo: user.uid)
-        .snapshots()
-        .map((snapshot) {
+  Stream<List<EventModel>> _fetchMenuFromFirebase() {
+    return FirebaseFirestore.instance.collection('event').snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         final moreImagesUrl = doc['moreImagesUrl'];
-        final imageUrlList =
-        moreImagesUrl is List ? moreImagesUrl : [moreImagesUrl];
+        final imageUrlList = moreImagesUrl is List ? moreImagesUrl : [moreImagesUrl];
 
         return EventModel(
           imageUrl: doc['imageUrl'],
@@ -60,22 +51,19 @@ class _EventPostState extends State<EventPost> {
     });
   }
 
-  Stream<List<EventModel>> _fetchMenuFromFirebase() {
-    return FirebaseFirestore.instance
-        .collection('event')
+  Stream<List<EventModel>> _fetchWishListFromFirebase() {
+    final User? user = FirebaseAuth.instance.currentUser;
+    return FirebaseFirestore.instance.collection('wishList')
+        .where('userUid', isEqualTo: user!.uid)
         .snapshots()
         .map((snapshot) {
       return snapshot.docs.map((doc) {
-        final moreImagesUrl = doc['moreImagesUrl'];
-        final imageUrlList =
-        moreImagesUrl is List ? moreImagesUrl : [moreImagesUrl];
-
         return EventModel(
           imageUrl: doc['imageUrl'],
           eventName: doc['eventName'],
-          docId: doc.id,
-          moreImagesUrl: imageUrlList.map((url) => url as String).toList(),
-          wishList: doc['wishList'],
+          docId: doc['docId'],
+          moreImagesUrl: [],
+          wishList: true,
           eventDescription: doc['eventDescription'],
           location: doc['location'],
           date: doc['date'],
@@ -159,19 +147,16 @@ class _EventPostState extends State<EventPost> {
     return Column(
       children: [
         SearchField(onSearch: _onSearch),
-        SizedBox(height: 20,),
+        SizedBox(height: 20),
         Flexible(
           child: StreamBuilder<List<EventModel>>(
             stream: _wishListStream,
             builder: (context, wishListSnapshot) {
               if (wishListSnapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return const Center(child: CircularProgressIndicator());
               } else if (wishListSnapshot.hasError) {
                 return Center(
-                  child: Text('Error: ${wishListSnapshot.error}',
-                      style: const TextStyle(color: Colors.white)),
+                  child: Text('Error: ${wishListSnapshot.error}', style: const TextStyle(color: Colors.white)),
                 );
               } else {
                 final List<EventModel> wishList = wishListSnapshot.data ?? [];
@@ -179,26 +164,24 @@ class _EventPostState extends State<EventPost> {
                   stream: _menuStream,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
                       return Center(
-                        child: Text('Error: ${snapshot.error}',
-                            style: const TextStyle(color: Colors.white)),
+                        child: Text('Error: ${snapshot.error}', style: const TextStyle(color: Colors.white)),
                       );
                     } else {
                       List<EventModel>? events = snapshot.data;
                       if (events != null && events.isNotEmpty) {
-                        List<EventModel> filteredMenu = events.where((event) => _matchesSearchText(event)).toList();
-                        filteredMenu.sort((a, b) => a.date.compareTo(b.date));
+                        // Exclude wishlist events from the displayed events
+                        List<EventModel> filteredMenu = events.where((event) => !_isInWishList(event, wishList) && _matchesSearchText(event)).toList();
 
                         // Find matching recommendations based on wishlist
                         List<EventModel> recommendedMenu = wishList.isNotEmpty
                             ? events.where((event) {
-                          return wishList.any((wish) =>
-                          event.eventName.toLowerCase().contains(wish.eventName.toLowerCase()) &&
-                              event.location.toLowerCase().contains(wish.location.toLowerCase()));
+                          return !wishList.any((wish) => wish.docId == event.docId) &&
+                              wishList.any((wish) =>
+                              event.eventName.toLowerCase().contains(wish.eventName.toLowerCase()) ||
+                                  event.location.toLowerCase().contains(wish.location.toLowerCase()));
                         }).toList()
                             : [];
 
@@ -213,8 +196,7 @@ class _EventPostState extends State<EventPost> {
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Text(
                                 "What's Next?",
-                                style: TextStyle(
-                                    fontSize: 22, color: Colors.white),
+                                style: TextStyle(fontSize: 22, color: Colors.white),
                               ),
                             ),
                             Expanded(
@@ -236,8 +218,7 @@ class _EventPostState extends State<EventPost> {
                         );
                       } else {
                         return const Center(
-                          child: Text('No event available.',
-                              style: TextStyle(color: Colors.white)),
+                          child: Text('No event available.', style: TextStyle(color: Colors.white)),
                         );
                       }
                     }
@@ -249,6 +230,10 @@ class _EventPostState extends State<EventPost> {
         ),
       ],
     );
+  }
+
+  bool _isInWishList(EventModel event, List<EventModel> wishList) {
+    return wishList.any((wish) => wish.docId == event.docId);
   }
 
   bool _matchesSearchText(EventModel menu) {

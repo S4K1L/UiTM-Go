@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uitmgo/Presentation/Home_Screen/event_model.dart';
@@ -24,8 +25,10 @@ class _WishListEventPostState extends State<WishListEventPost> {
 
 
   Stream<List<EventModel>> _fetchMenuFromFirebase() {
+    final User? user = FirebaseAuth.instance.currentUser;
     return FirebaseFirestore.instance
         .collection('wishList')
+        .where('userUid', isEqualTo: user!.uid)
         .snapshots()
         .map((snapshot) {
       return snapshot.docs.map((doc) {
@@ -50,7 +53,6 @@ class _WishListEventPostState extends State<WishListEventPost> {
   Future<void> _deletePost(String docId) async {
     await FirebaseFirestore.instance.collection('wishList').doc(docId).delete();
   }
-
   Widget _buildMenu(BuildContext context, EventModel menu) {
     return GestureDetector(
       onTap: () {
@@ -157,13 +159,13 @@ class _WishListEventPostState extends State<WishListEventPost> {
                     );
                   } else {
                     return const Center(
-                      child: Text('No matching event found.',
+                      child: Text('No matching Wishlist found.',
                           style: TextStyle(color: Colors.white)),
                     );
                   }
                 } else {
                   return const Center(
-                    child: Text('No event available.',
+                    child: Text('No Wishlist available.',
                         style: TextStyle(color: Colors.white)),
                   );
                 }

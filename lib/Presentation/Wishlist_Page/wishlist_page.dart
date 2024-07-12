@@ -18,6 +18,7 @@ class _WishlistPageState extends State<WishlistPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.black,
         title: const Column(
           children: [
