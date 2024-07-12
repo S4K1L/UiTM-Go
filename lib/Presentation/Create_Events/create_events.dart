@@ -18,8 +18,7 @@ class CreateEvents extends StatefulWidget {
 class _CreateEventsState extends State<CreateEvents> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _eventNameController = TextEditingController();
-  final TextEditingController _eventDescriptionController =
-  TextEditingController();
+  final TextEditingController _eventDescriptionController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final List<File> _images = [];
@@ -34,7 +33,7 @@ class _CreateEventsState extends State<CreateEvents> {
       imageQuality: 85,
     );
 
-    if (pickedFiles != null && pickedFiles.isNotEmpty) {
+    if (pickedFiles.isNotEmpty) {
       setState(() {
         _images.addAll(pickedFiles.map((file) => File(file.path)));
       });
@@ -45,7 +44,12 @@ class _CreateEventsState extends State<CreateEvents> {
   }
 
   Future<void> _uploadAllData() async {
-    if (!_formKey.currentState!.validate() || _images.isEmpty) return;
+    if (!_formKey.currentState!.validate() || _images.isEmpty) {
+      if (_images.isEmpty) {
+        _showErrorSnackBar("Please select at least one image.");
+      }
+      return;
+    }
 
     setState(() {
       _isUploading = true;
@@ -140,7 +144,7 @@ class _CreateEventsState extends State<CreateEvents> {
       SnackBar(
         content: Row(
           children: [
-            Icon(Icons.nearby_error, color: Colors.white),
+            Icon(Icons.error, color: Colors.white),
             SizedBox(width: 10),
             Expanded(
               child: Text(
@@ -170,8 +174,7 @@ class _CreateEventsState extends State<CreateEvents> {
         backgroundColor: Colors.black,
         title: Column(
           children: [
-            const Text('Add Event',
-                style: TextStyle(color: Colors.white, fontSize: 22)),
+            const Text('Add Event', style: TextStyle(color: Colors.white, fontSize: 22)),
             Divider(),
           ],
         ),
@@ -182,7 +185,7 @@ class _CreateEventsState extends State<CreateEvents> {
           radius: 80.0,
           lineWidth: 16.0,
           percent: _uploadProgress,
-          center: Text('${(_uploadProgress * 100).toStringAsFixed(0)}%',style: TextStyle(color: Colors.white),),
+          center: Text('${(_uploadProgress * 100).toStringAsFixed(0)}%', style: TextStyle(color: Colors.white)),
           progressColor: Colors.amber,
         ),
       )
@@ -197,18 +200,16 @@ class _CreateEventsState extends State<CreateEvents> {
                     alignment: Alignment.centerLeft,
                     child: TextButton(
                         onPressed: _getImage,
-                        child: const Icon(Icons.image,
-                            color: Colors.white, size: 55)),
+                        child: Image.asset('assets/images/add.png',width: 80,height: 80,),),
                   ),
                 ),
-                const SizedBox(height: 16.0),
+                const SizedBox(height: 5.0),
                 _images.isEmpty
                     ? Container()
                     : GridView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  gridDelegate:
-                  SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
@@ -228,22 +229,18 @@ class _CreateEventsState extends State<CreateEvents> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        _buildTextField(
-                            'Event Name', _eventNameController, true),
+                        _buildTextField('Event Name', _eventNameController, true),
                         const SizedBox(height: 20),
-                        _buildTextField('Event Description',
-                            _eventDescriptionController, true),
+                        _buildTextField('Event Description', _eventDescriptionController, true),
                         const SizedBox(height: 20),
                         _buildDateField(),
                         const SizedBox(height: 20),
-                        _buildTextField(
-                            'Location', _locationController, false),
+                        _buildTextField('Location', _locationController, true),
                         const SizedBox(height: 50),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.purple,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 50, vertical: 20),
+                            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
                             textStyle: const TextStyle(fontSize: 18),
                           ),
                           onPressed: _uploadAllData,
@@ -333,8 +330,7 @@ class _CreateEventsState extends State<CreateEvents> {
                     lastDate: DateTime(2101),
                   );
                   if (pickedDate != null) {
-                    String formattedDate =
-                    DateFormat('yyyy-MM-dd').format(pickedDate);
+                    String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
                     _dateController.text = formattedDate;
                   }
                 },
